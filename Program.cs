@@ -62,6 +62,9 @@ namespace NmmQuad
             double[] cosData = nmmScanData.ExtractProfile("F5", 0, TopographyProcessType.ForwardOnly);
             Quad[] data = CombineSignals(sinData, cosData);
             Array.Sort(data);
+
+            DataAnalyst dataAnalyst = new DataAnalyst(data);
+
             string csvString = CsvContents(data);
             File.WriteAllText(outPutFilename, csvString);
             
