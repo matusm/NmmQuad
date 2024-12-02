@@ -69,14 +69,17 @@ namespace NmmQuad
             Console.WriteLine(dataAnalyst.GetReport());
 
             string csvString = CsvContents(data, dataAnalyst);
-            string outPutFilename = GetOutputFilename(nmmFileName.BaseFileName, ops);
-            File.WriteAllText(outPutFilename, csvString);
-            Console.WriteLine($"Sorted data written in {outPutFilename}");
+            string outPutBaseFilename = GetOutputBaseFilename(nmmFileName.BaseFileName, ops);
+            File.WriteAllText(outPutBaseFilename+".csv", csvString);
+            Console.WriteLine($"Sorted data written in {outPutBaseFilename}");
+
+            Plotter pl = new Plotter(data);
+            pl.SaveImage(outPutBaseFilename+".png");
 
         }
         /**********************************************************************/
 
-        private static string GetOutputFilename(string baseFilename, Options opt)
+        private static string GetOutputBaseFilename(string baseFilename, Options opt)
         {
             if (!string.IsNullOrWhiteSpace(opt.OutputPath))
                 return opt.OutputPath;
@@ -86,7 +89,7 @@ namespace NmmQuad
             if (opt.ProfileIndex != 0) s1 = $"_p{opt.ProfileIndex}";
             if (opt.ScanIndex != 0) s2 = $"_s{opt.ScanIndex}";
             if (opt.UseBack) s3 = "_b";
-            return $"{baseFilename}{s2}{s1}{s3}_Zquad.csv";
+            return $"{baseFilename}{s2}{s1}{s3}_Zquad";
         }
 
         /**********************************************************************/
