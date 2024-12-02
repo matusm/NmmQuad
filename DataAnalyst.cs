@@ -37,8 +37,6 @@ namespace NmmQuad
             return sb.ToString();
         }
 
-
-
         private void EstimateCircleSquashing(Quad[] data)
         {
             for (int i = 0; i < data.Length; i++)

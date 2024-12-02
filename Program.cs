@@ -47,15 +47,14 @@ namespace NmmQuad
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
             NmmFileName nmmFileName = new NmmFileName(options.InputPath);
-  
+
             NmmDescriptionFileParser nmmDsc = new NmmDescriptionFileParser(nmmFileName);
             if (nmmDsc.Procedure == MeasurementProcedure.NoFile)
                 ErrorExit("!file not found(?)", 1);
-            int numberOfScans = nmmDsc.NumberOfScans;
-          
+            if (nmmDsc.NumberOfScans < options.ScanIndex)
+                ErrorExit("!scan number not present in files", 1);
             nmmFileName.SetScanIndex(options.ScanIndex);
             NmmScanData nmmScanData = new NmmScanData(nmmFileName);
-
 
             if (!nmmScanData.ColumnPresent("F4"))
                 ErrorExit("!sin channel absent", 2);
@@ -68,23 +67,25 @@ namespace NmmQuad
 
             DataAnalyst dataAnalyst = new DataAnalyst(data);
             Console.WriteLine(dataAnalyst.GetReport());
-            
-            string csvString = CsvContents(data, dataAnalyst);
-            string outPutFilename = GetOutputFilename(nmmFileName.BaseFileName, options.ProfileIndex, options.ScanIndex, options.UseBack);
-            File.WriteAllText(outPutFilename, csvString);
 
+            string csvString = CsvContents(data, dataAnalyst);
+            string outPutFilename = GetOutputFilename(nmmFileName.BaseFileName, ops);
+            File.WriteAllText(outPutFilename, csvString);
+            Console.WriteLine($"Sorted data written in {outPutFilename}");
 
         }
         /**********************************************************************/
 
-        private static string GetOutputFilename(string baseFilename, int profile, int scan, bool useBack)
+        private static string GetOutputFilename(string baseFilename, Options opt)
         {
+            if (!string.IsNullOrWhiteSpace(opt.OutputPath))
+                return opt.OutputPath;
             string s1 = string.Empty;
             string s2 = string.Empty;
             string s3 = "_f";
-            if (profile != 0) s1 = $"_p{profile}";
-            if (scan != 0) s2 = $"_s{scan}";
-            if (useBack) s3 = "_b";
+            if (opt.ProfileIndex != 0) s1 = $"_p{opt.ProfileIndex}";
+            if (opt.ScanIndex != 0) s2 = $"_s{opt.ScanIndex}";
+            if (opt.UseBack) s3 = "_b";
             return $"{baseFilename}{s2}{s1}{s3}_Zquad.csv";
         }
 
@@ -115,7 +116,7 @@ namespace NmmQuad
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < data.Length; i++)
             {
-                sb.AppendLine($"{data[i].PhiDeg+180,8:F3}, {data[i].Radius:F3}, {data[i].Radius-dataAnalyst.AverageRadius:F3}");
+                sb.AppendLine($"{data[i].PhiDeg + 180,8:F3}, {data[i].Radius:F3}, {data[i].Radius - dataAnalyst.AverageRadius:F3}");
             }
             return sb.ToString();
         }
