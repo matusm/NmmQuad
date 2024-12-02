@@ -47,28 +47,45 @@ namespace NmmQuad
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
             NmmFileName nmmFileName = new NmmFileName(options.InputPath);
-            string outPutFilename = nmmFileName.BaseFileName + "_quad_Z.csv";
+  
             NmmDescriptionFileParser nmmDsc = new NmmDescriptionFileParser(nmmFileName);
             if (nmmDsc.Procedure == MeasurementProcedure.NoFile)
                 ErrorExit("!file not found(?)", 1);
             int numberOfScans = nmmDsc.NumberOfScans;
+          
             nmmFileName.SetScanIndex(options.ScanIndex);
             NmmScanData nmmScanData = new NmmScanData(nmmFileName);
+
+
             if (!nmmScanData.ColumnPresent("F4"))
                 ErrorExit("!sin channel absent", 2);
             if (!nmmScanData.ColumnPresent("F5"))
                 ErrorExit("!cos channel absent", 3);
-            double[] sinData = nmmScanData.ExtractProfile("F4", 0, TopographyProcessType.ForwardOnly);
-            double[] cosData = nmmScanData.ExtractProfile("F5", 0, TopographyProcessType.ForwardOnly);
+            double[] sinData = nmmScanData.ExtractProfile("F4", options.ProfileIndex, options.ScanDirection);
+            double[] cosData = nmmScanData.ExtractProfile("F5", options.ProfileIndex, options.ScanDirection);
             Quad[] data = CombineSignals(sinData, cosData);
             Array.Sort(data);
 
             DataAnalyst dataAnalyst = new DataAnalyst(data);
             Console.WriteLine(dataAnalyst.GetReport());
-
+            
             string csvString = CsvContents(data, dataAnalyst);
+            string outPutFilename = GetOutputFilename(nmmFileName.BaseFileName, options.ProfileIndex, options.ScanIndex, options.UseBack);
             File.WriteAllText(outPutFilename, csvString);
 
+
+        }
+        /**********************************************************************/
+
+        private static string GetOutputFilename(string baseFilename, int profile, int scan, bool useBack)
+        {
+            string s1 = string.Empty;
+            string s2 = string.Empty;
+            string s3 = "_f";
+            if (profile != 0) s1 = $"_p{profile}";
+            if (scan != 0) s2 = $"_s{scan}";
+            if (useBack) s3 = "_b";
+            return $"{baseFilename}{s2}{s1}{s3}_Zquad.csv";
         }
 
         /**********************************************************************/
