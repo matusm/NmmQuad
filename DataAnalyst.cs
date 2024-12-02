@@ -1,6 +1,7 @@
 ﻿using At.Matus.StatisticPod;
 using Bev.IO.NmmReader.scan_mode;
 using System;
+using System.Text;
 
 namespace NmmQuad
 {
@@ -11,6 +12,7 @@ namespace NmmQuad
         public double MaximumRadius => allRadii.MaximumValue;
         public double AxisRadius => axisRadii.AverageValue;
         public double MedianRadius => medianRadii.AverageValue;
+        public double RelativeSquashing => (MedianRadius - AxisRadius) / AverageRadius;
 
         public int AllSamples => (int)allRadii.SampleSize;
         public int AxisSamples => (int)axisRadii.SampleSize;
@@ -20,6 +22,22 @@ namespace NmmQuad
         {
             EstimateCircleSquashing(data);
         }
+
+        public string GetReport()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Average radius:             {AverageRadius,6:F1}");
+            sb.AppendLine($"Smallest radius:            {MinimumRadius,6:F1}");
+            sb.AppendLine($"Largest radius:             {MaximumRadius,6:F1}");
+            sb.AppendLine($"Average radius near axis:   {AxisRadius,6:F1}");
+            sb.AppendLine($"Average radius near median: {MedianRadius,6:F1}");
+            sb.AppendLine($"Relative squashing:         {RelativeSquashing*100,6:F1} %");
+            sb.AppendLine($"Total sample size:          {AllSamples}");
+            sb.AppendLine($"Sample size for fit:        {AxisSamples+MedianSamples}");
+            return sb.ToString();
+        }
+
+
 
         private void EstimateCircleSquashing(Quad[] data)
         {

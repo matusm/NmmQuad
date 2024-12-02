@@ -64,13 +64,10 @@ namespace NmmQuad
             Array.Sort(data);
 
             DataAnalyst dataAnalyst = new DataAnalyst(data);
+            Console.WriteLine(dataAnalyst.GetReport());
 
-            string csvString = CsvContents(data);
+            string csvString = CsvContents(data, dataAnalyst);
             File.WriteAllText(outPutFilename, csvString);
-            
-
-            Console.WriteLine();
-            Console.WriteLine(data.Length);
 
         }
 
@@ -96,12 +93,12 @@ namespace NmmQuad
 
         /**********************************************************************/
 
-        private static string CsvContents(Quad[] data)
+        private static string CsvContents(Quad[] data, DataAnalyst dataAnalyst)
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < data.Length; i++)
             {
-                sb.AppendLine($"{data[i].PhiDeg,8:F3}, {data[i].Radius:F3}");
+                sb.AppendLine($"{data[i].PhiDeg+180,8:F3}, {data[i].Radius:F3}, {data[i].Radius-dataAnalyst.AverageRadius:F3}");
             }
             return sb.ToString();
         }
