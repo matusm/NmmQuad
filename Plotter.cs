@@ -7,16 +7,26 @@ namespace NmmQuad
 {
     public class Plotter
     {
-        private const int imageSize = 1024;
+        private const int imageSize = 800;
+        private const double over = 1.1; // 10 % larger
         private Color backgnd = Color.White;
         private Color dataDot = Color.Red;
-        private Pen circlePen = new Pen(Color.BlueViolet, 1F);
-        private Pen otherPen = new Pen(Color.Blue, 1F);
+        private Pen circlePen = new Pen(Color.Blue, 1F);
+        private Pen otherPen = new Pen(Color.LightGray, 1F);
 
         public Plotter(Quad[] data)
         {
-            DrawGuideLines();
+            ClearBackgnd(backgnd);
             PlotLissajous(data);
+            DrawGuideLines();
+        }
+
+        private void ClearBackgnd(Color backgnd)
+        {
+            using (Graphics g = Graphics.FromImage(bitmap))
+            {
+                g.Clear(backgnd);
+            }
         }
 
         public void SaveImage(string filename)
@@ -29,12 +39,13 @@ namespace NmmQuad
         {
             using (Graphics g = Graphics.FromImage(bitmap))
             {
-                g.Clear(backgnd);
-                g.DrawLine(otherPen, 0, 0, imageSize, imageSize);
-                g.DrawLine(otherPen, 0, imageSize, imageSize,0);
-                g.DrawLine(otherPen, 0, imageSize/2, imageSize, imageSize/2);
-                g.DrawLine(otherPen, imageSize / 2, 0, imageSize/2, imageSize);
-                g.DrawEllipse(circlePen, 10, 10, imageSize - 20, imageSize - 20);
+                g.DrawLine(otherPen, Transform(-1 * over / Math.Sqrt(2)), Transform(-1 * over / Math.Sqrt(2)), Transform(1 * over / Math.Sqrt(2)), Transform(1 * over / Math.Sqrt(2)));
+                g.DrawLine(otherPen, Transform(-1 * over / Math.Sqrt(2)), Transform(1 * over / Math.Sqrt(2)), Transform(1 * over / Math.Sqrt(2)), Transform(-1 * over / Math.Sqrt(2)));
+                g.DrawLine(otherPen, Transform(-1 * over), Transform(0), Transform(1 * over), Transform(0));
+                g.DrawLine(otherPen, Transform(0), Transform(-1 * over), Transform(0), Transform(1 * over));
+                g.DrawEllipse(circlePen, Transform(-1), Transform(-1), Transform(1 / over), Transform(1 / over));
+                g.DrawEllipse(circlePen, Transform(-1.05), Transform(-1.05), Transform(1.1 / over), Transform(1.1 / over));
+
             }
         }
 
@@ -42,11 +53,15 @@ namespace NmmQuad
         {
             foreach (var q in data)
             {
-                int x = (int)q.Sin + imageSize / 2;
-                int y = (int)q.Cos + imageSize / 2;
-                bitmap.SetPixel(x, y, dataDot);
+                int x = Transform(q.Sin);
+                int y = Transform(q.Cos);
+                if (x >= 0 && x < imageSize && y >= 0 && y < imageSize)
+                    bitmap.SetPixel(x, y, dataDot);
             }
         }
+
+
+        private int Transform(double v) => (int)(imageSize * 0.5 * (v / over + 1));
 
         private readonly Bitmap bitmap = new Bitmap(imageSize, imageSize, PixelFormat.Format24bppRgb);
     }

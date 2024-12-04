@@ -17,10 +17,12 @@ namespace NmmQuad
         public int AllSamples => (int)allRadii.SampleSize;
         public int AxisSamples => (int)axisRadii.SampleSize;
         public int MedianSamples => (int)medianRadii.SampleSize;
+        public Quad[] NormalizedData { get; private set; }
 
         public DataAnalyst(Quad[] data)
         {
             EstimateCircleSquashing(data);
+            Normalize(data);
         }
 
         public string GetReport()
@@ -35,6 +37,17 @@ namespace NmmQuad
             sb.AppendLine($"Total sample size:          {AllSamples}");
             sb.AppendLine($"Sample size for fit:        {AxisSamples+MedianSamples}");
             return sb.ToString();
+        }
+
+        private void Normalize(Quad[] data)
+        {
+            NormalizedData = new Quad[data.Length];
+            for (int i = 0; i < NormalizedData.Length; i++)
+            {
+                double s = data[i].Sin / AverageRadius;
+                double c = data[i].Cos / AverageRadius;
+                NormalizedData[i] = new Quad(s, c);
+            }
         }
 
         private void EstimateCircleSquashing(Quad[] data)

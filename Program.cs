@@ -73,8 +73,8 @@ namespace NmmQuad
             File.WriteAllText(outPutBaseFilename+".csv", csvString);
             Console.WriteLine($"Sorted data written in {outPutBaseFilename}");
 
-            Plotter pl = new Plotter(data);
-            pl.SaveImage(outPutBaseFilename+".png");
+            Plotter plotter = new Plotter(dataAnalyst.NormalizedData);
+            plotter.SaveImage(outPutBaseFilename+".png");
 
         }
         /**********************************************************************/
