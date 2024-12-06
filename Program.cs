@@ -57,29 +57,71 @@ namespace NmmQuad
             nmmFileName.SetScanIndex(options.ScanIndex);
             NmmScanData nmmScanData = new NmmScanData(nmmFileName);
 
+
+
+            //if (!nmmScanData.ColumnPresent("F4"))
+            //    ErrorExit("!sin channel absent", 2);
+            //if (!nmmScanData.ColumnPresent("F5"))
+            //    ErrorExit("!cos channel absent", 3);
+            //double[] sinData = nmmScanData.ExtractProfile("F4", options.ProfileIndex, options.ScanDirection);
+            //double[] cosData = nmmScanData.ExtractProfile("F5", options.ProfileIndex, options.ScanDirection);
+            //Quad[] data = CombineSignals(sinData, cosData);
+            //Array.Sort(data);
+
+            if (ZdataPresent(nmmScanData))
+            {
+                Quad[] data = GetZdata(nmmScanData);
+                DataAnalyst dataAnalyst = new DataAnalyst(data);
+                Console.WriteLine(dataAnalyst.GetReport());
+                string csvString = CsvContents(data, dataAnalyst);
+                string outPutBaseFilename = GetOutputBaseFilename(nmmFileName.BaseFileName, ops);
+                File.WriteAllText(outPutBaseFilename + ".csv", csvString);
+                Console.WriteLine($"Sorted data written in {outPutBaseFilename}");
+
+                Plotter plotter = new Plotter(options.BitmapSize, "Z", dataAnalyst.NormalizedData);
+
+                string imageFileName = outPutBaseFilename + ".png";
+                plotter.SaveImage(imageFileName);
+                DisplayPlotFile(imageFileName);
+            }
+        }
+
+        /**********************************************************************/
+
+        private static bool XdataPresent(NmmScanData nmmScanData)
+        {
+            if (!nmmScanData.ColumnPresent("F0"))
+                return false;
+            if (!nmmScanData.ColumnPresent("F1"))
+                return false;
+            return true;
+        }
+        private static bool YdataPresent(NmmScanData nmmScanData)
+        {
+            if (!nmmScanData.ColumnPresent("F2"))
+                return false;
+            if (!nmmScanData.ColumnPresent("F3"))
+                return false;
+            return true;
+        }
+        private static bool ZdataPresent(NmmScanData nmmScanData)
+        {
             if (!nmmScanData.ColumnPresent("F4"))
-                ErrorExit("!sin channel absent", 2);
+                return false;
             if (!nmmScanData.ColumnPresent("F5"))
-                ErrorExit("!cos channel absent", 3);
+                return false;
+            return true;
+        }
+
+        /**********************************************************************/
+
+        private static Quad[] GetZdata(NmmScanData nmmScanData)
+        {
             double[] sinData = nmmScanData.ExtractProfile("F4", options.ProfileIndex, options.ScanDirection);
             double[] cosData = nmmScanData.ExtractProfile("F5", options.ProfileIndex, options.ScanDirection);
             Quad[] data = CombineSignals(sinData, cosData);
             Array.Sort(data);
-
-            DataAnalyst dataAnalyst = new DataAnalyst(data);
-            Console.WriteLine(dataAnalyst.GetReport());
-
-            string csvString = CsvContents(data, dataAnalyst);
-            string outPutBaseFilename = GetOutputBaseFilename(nmmFileName.BaseFileName, ops);
-            File.WriteAllText(outPutBaseFilename + ".csv", csvString);
-            Console.WriteLine($"Sorted data written in {outPutBaseFilename}");
-
-            Plotter plotter = new Plotter(options.BitmapSize, dataAnalyst.NormalizedData);
-
-            string imageFileName = outPutBaseFilename + ".png";
-            plotter.SaveImage(imageFileName);
-            DisplayPlotFile(imageFileName);
-
+            return data;
         }
 
         /**********************************************************************/
