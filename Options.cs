@@ -14,6 +14,9 @@ namespace NmmQuad
         [Option("back", HelpText = "Use backtrace profile (when present).")]
         public bool UseBack { get; set; }
 
+        [Option('g', "size", Default = 800, HelpText = "Size of plot graphic (in pixels)")]
+        public int BitmapSize { get; set; }
+
         [Value(0, MetaName = "InputPath", Required = true, HelpText = "Input file-name including path")]
         public string InputPath { get; set; }
 

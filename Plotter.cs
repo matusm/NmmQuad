@@ -7,7 +7,7 @@ namespace NmmQuad
 {
     public class Plotter
     {
-        private const int imageSize = 800;
+        private int imageSize;
         private const int dotSize = 2;
         private const double over = 1.15; // 15 % larger
         private const double amplification = 10; // amplify deviation by this amount
@@ -17,8 +17,10 @@ namespace NmmQuad
         private static Color circleCol = Color.LightBlue;
         private static Color axisCol = Color.LightGray;
 
-        public Plotter(Quad[] normData)
+        public Plotter(int size, Quad[] normData)
         {
+            imageSize = size;
+            bitmap = new Bitmap(imageSize, imageSize, PixelFormat.Format24bppRgb);
             ClearBackgnd(backgndCol);
             PlotDeviation(normData, devDotCol);
             PlotLissajous(normData, dataDotCol);
@@ -107,7 +109,7 @@ namespace NmmQuad
             return Transform(radius) - Transform(-radius);
         }
 
-        private readonly Bitmap bitmap = new Bitmap(imageSize, imageSize, PixelFormat.Format24bppRgb);
+        private readonly Bitmap bitmap;
     }
 
 }

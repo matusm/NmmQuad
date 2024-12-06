@@ -4,6 +4,7 @@ using CommandLine;
 using CommandLine.Text;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -70,13 +71,17 @@ namespace NmmQuad
 
             string csvString = CsvContents(data, dataAnalyst);
             string outPutBaseFilename = GetOutputBaseFilename(nmmFileName.BaseFileName, ops);
-            File.WriteAllText(outPutBaseFilename+".csv", csvString);
+            File.WriteAllText(outPutBaseFilename + ".csv", csvString);
             Console.WriteLine($"Sorted data written in {outPutBaseFilename}");
 
-            Plotter plotter = new Plotter(dataAnalyst.NormalizedData);
-            plotter.SaveImage(outPutBaseFilename+".png");
+            Plotter plotter = new Plotter(options.BitmapSize, dataAnalyst.NormalizedData);
+
+            string imageFileName = outPutBaseFilename + ".png";
+            plotter.SaveImage(imageFileName);
+            DisplayPlotFile(imageFileName);
 
         }
+
         /**********************************************************************/
 
         private static string GetOutputBaseFilename(string baseFilename, Options opt)
@@ -122,6 +127,19 @@ namespace NmmQuad
                 sb.AppendLine($"{data[i].PhiDeg + 180,8:F3}, {data[i].Radius:F3}, {data[i].Radius - dataAnalyst.AverageRadius:F3}");
             }
             return sb.ToString();
+        }
+
+        /**********************************************************************/
+
+        private static void DisplayPlotFile(string imageName)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.FileName = imageName;
+            startInfo.RedirectStandardOutput = false;
+            startInfo.UseShellExecute = true;
+            Process process = new Process();
+            process.StartInfo = startInfo;
+            process.Start();
         }
     }
 }
