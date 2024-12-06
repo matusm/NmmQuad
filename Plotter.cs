@@ -8,20 +8,22 @@ namespace NmmQuad
     public class Plotter
     {
         private const int imageSize = 800;
+        private const int dotSize = 2;
         private const double over = 1.15; // 15 % larger
+        private const double amplification = 10; // amplify deviation by this amount
         private static Color backgndCol = Color.White;
         private static Color dataDotCol = Color.Red;
-        private static Color circleCol = Color.Blue;
+        private static Color devDotCol = Color.DarkOrange;
+        private static Color circleCol = Color.LightBlue;
         private static Color axisCol = Color.LightGray;
-        private static Pen circlePen = new Pen(circleCol, 1F);
-        private static Pen axesPen = new Pen(axisCol, 1F);
 
         public Plotter(Quad[] normData)
         {
             ClearBackgnd(backgndCol);
+            PlotDeviation(normData, devDotCol);
             PlotLissajous(normData, dataDotCol);
-            DrawAxes(axesPen);
-            DrawCircles(circlePen);
+            DrawAxes(axisCol);
+            DrawCircles(circleCol);
         }
 
         public void SaveImage(string filename)
@@ -38,8 +40,9 @@ namespace NmmQuad
             }
         }
 
-        private void DrawAxes(Pen pen)
+        private void DrawAxes(Color color)
         {
+            Pen pen = new Pen(color, 1F);
             using (Graphics g = Graphics.FromImage(bitmap))
             {
                 g.DrawLine(pen, Transform(-1 * over / Math.Sqrt(2)), Transform(-1 * over / Math.Sqrt(2)), Transform(1 * over / Math.Sqrt(2)), Transform(1 * over / Math.Sqrt(2)));
@@ -49,8 +52,9 @@ namespace NmmQuad
             }
         }
 
-        private void DrawCircles(Pen pen)
+        private void DrawCircles(Color color)
         {
+            Pen pen = new Pen(color, 1F);
             double[] radii = new double[] { 0.9, 0.95, 1, 1.05, 1.1};
             using (Graphics g = Graphics.FromImage(bitmap))
             {
@@ -70,7 +74,23 @@ namespace NmmQuad
                 {
                     int x = Transform(q.Sin);
                     int y = Transform(q.Cos);
-                    g.FillRectangle(aBrush, x, y, 1, 1);
+                    g.FillRectangle(aBrush, x, y, dotSize, dotSize);
+                }
+            }
+        }
+
+        private void PlotDeviation(Quad[] data, Color color)
+        {
+            SolidBrush aBrush = new SolidBrush(color);
+            using (Graphics g=Graphics.FromImage(bitmap))
+            {
+                foreach (var q in data)
+                {
+                    double deviation = q.Radius - 1;
+                    Quad tempQ = new Quad(1 + deviation * amplification, q.Phi, AngleUnit.Radian);
+                    int x = Transform(tempQ.Sin);
+                    int y = Transform(tempQ.Cos);
+                    g.FillRectangle(aBrush, x, y, dotSize, dotSize);
                 }
             }
         }
