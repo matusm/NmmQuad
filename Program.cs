@@ -7,9 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace NmmQuad
 {
@@ -57,33 +55,65 @@ namespace NmmQuad
             nmmFileName.SetScanIndex(options.ScanIndex);
             NmmScanData nmmScanData = new NmmScanData(nmmFileName);
 
+            Console.WriteLine();
 
+            if (XdataPresent(nmmScanData))
+            {
+                string interfero = "X";
+                Console.WriteLine($"{interfero}-interferometer quadrature signals present.");
+                Quad[] data = GetXdata(nmmScanData);
+                DataAnalyst dataAnalyst = new DataAnalyst(data);
+                Console.WriteLine(dataAnalyst.GetReport());
+                string csvString = CsvContents(data, dataAnalyst);
+                string outPutBaseFilename = GetOutputBaseFilename(nmmFileName.BaseFileName, interfero);
+                string imageFileName = outPutBaseFilename + ".png";
+                string csvFileName = outPutBaseFilename + ".csv";
+                File.WriteAllText(csvFileName, csvString);
+                Console.WriteLine($"Sorted data written in {csvFileName}");
+                Console.WriteLine();
+                Plotter plotter = new Plotter(options.BitmapSize, interfero, dataAnalyst.NormalizedData);
+                plotter.SaveImage(imageFileName);
+                DisplayPlotFile(imageFileName);
+            }
 
-            //if (!nmmScanData.ColumnPresent("F4"))
-            //    ErrorExit("!sin channel absent", 2);
-            //if (!nmmScanData.ColumnPresent("F5"))
-            //    ErrorExit("!cos channel absent", 3);
-            //double[] sinData = nmmScanData.ExtractProfile("F4", options.ProfileIndex, options.ScanDirection);
-            //double[] cosData = nmmScanData.ExtractProfile("F5", options.ProfileIndex, options.ScanDirection);
-            //Quad[] data = CombineSignals(sinData, cosData);
-            //Array.Sort(data);
+            if (YdataPresent(nmmScanData))
+            {
+                string interfero = "Y";
+                Console.WriteLine($"{interfero}-interferometer quadrature signals present.");
+                Quad[] data = GetYdata(nmmScanData);
+                DataAnalyst dataAnalyst = new DataAnalyst(data);
+                Console.WriteLine(dataAnalyst.GetReport());
+                string csvString = CsvContents(data, dataAnalyst);
+                string outPutBaseFilename = GetOutputBaseFilename(nmmFileName.BaseFileName, interfero);
+                string imageFileName = outPutBaseFilename + ".png";
+                string csvFileName = outPutBaseFilename + ".csv";
+                File.WriteAllText(csvFileName, csvString);
+                Console.WriteLine($"Sorted data written in {csvFileName}");
+                Console.WriteLine();
+                Plotter plotter = new Plotter(options.BitmapSize, interfero, dataAnalyst.NormalizedData);
+                plotter.SaveImage(imageFileName);
+                DisplayPlotFile(imageFileName);
+            }
 
             if (ZdataPresent(nmmScanData))
             {
+                string interfero = "Z";
+                Console.WriteLine($"{interfero}-interferometer quadrature signals present.");
                 Quad[] data = GetZdata(nmmScanData);
                 DataAnalyst dataAnalyst = new DataAnalyst(data);
                 Console.WriteLine(dataAnalyst.GetReport());
                 string csvString = CsvContents(data, dataAnalyst);
-                string outPutBaseFilename = GetOutputBaseFilename(nmmFileName.BaseFileName, ops);
-                File.WriteAllText(outPutBaseFilename + ".csv", csvString);
-                Console.WriteLine($"Sorted data written in {outPutBaseFilename}");
-
-                Plotter plotter = new Plotter(options.BitmapSize, "Z", dataAnalyst.NormalizedData);
-
+                string outPutBaseFilename = GetOutputBaseFilename(nmmFileName.BaseFileName, interfero);
                 string imageFileName = outPutBaseFilename + ".png";
+                string csvFileName = outPutBaseFilename + ".csv";
+                File.WriteAllText(csvFileName, csvString);
+                Console.WriteLine($"Sorted data written in {csvFileName}");
+                Console.WriteLine();
+                Plotter plotter = new Plotter(options.BitmapSize, interfero, dataAnalyst.NormalizedData);
                 plotter.SaveImage(imageFileName);
                 DisplayPlotFile(imageFileName);
             }
+
         }
 
         /**********************************************************************/
@@ -115,6 +145,22 @@ namespace NmmQuad
 
         /**********************************************************************/
 
+        private static Quad[] GetXdata(NmmScanData nmmScanData)
+        {
+            double[] sinData = nmmScanData.ExtractProfile("F0", options.ProfileIndex, options.ScanDirection);
+            double[] cosData = nmmScanData.ExtractProfile("F1", options.ProfileIndex, options.ScanDirection);
+            Quad[] data = CombineSignals(sinData, cosData);
+            Array.Sort(data);
+            return data;
+        }
+        private static Quad[] GetYdata(NmmScanData nmmScanData)
+        {
+            double[] sinData = nmmScanData.ExtractProfile("F2", options.ProfileIndex, options.ScanDirection);
+            double[] cosData = nmmScanData.ExtractProfile("F3", options.ProfileIndex, options.ScanDirection);
+            Quad[] data = CombineSignals(sinData, cosData);
+            Array.Sort(data);
+            return data;
+        }
         private static Quad[] GetZdata(NmmScanData nmmScanData)
         {
             double[] sinData = nmmScanData.ExtractProfile("F4", options.ProfileIndex, options.ScanDirection);
@@ -123,20 +169,20 @@ namespace NmmQuad
             Array.Sort(data);
             return data;
         }
-
+        
         /**********************************************************************/
 
-        private static string GetOutputBaseFilename(string baseFilename, Options opt)
+        private static string GetOutputBaseFilename(string baseFilename, string interferometer)
         {
-            if (!string.IsNullOrWhiteSpace(opt.OutputPath))
-                return opt.OutputPath;
+            if (!string.IsNullOrWhiteSpace(options.OutputPath))
+                return options.OutputPath;
             string s1 = string.Empty;
             string s2 = string.Empty;
             string s3 = "_f";
-            if (opt.ProfileIndex != 0) s1 = $"_p{opt.ProfileIndex}";
-            if (opt.ScanIndex != 0) s2 = $"_s{opt.ScanIndex}";
-            if (opt.UseBack) s3 = "_b";
-            return $"{baseFilename}{s2}{s1}{s3}_Zquad";
+            if (options.ProfileIndex != 0) s1 = $"_p{options.ProfileIndex}";
+            if (options.ScanIndex != 0) s2 = $"_s{options.ScanIndex}";
+            if (options.UseBack) s3 = "_b";
+            return $"{baseFilename}{s2}{s1}{s3}_{interferometer}quad";
         }
 
         /**********************************************************************/

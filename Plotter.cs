@@ -14,8 +14,8 @@ namespace NmmQuad
         private static Color backgndCol = Color.LightYellow;
         private static Color dataDotCol = Color.Red;
         private static Color devDotCol = Color.DarkOrange;
-        private static Color circleCol = Color.LightBlue;
-        private static Color axisCol = Color.LightGray;
+        private static Color circleCol = Color.DarkGray;
+        private static Color axisCol = Color.DarkGray;
         private static Color textCol = Color.Black;
 
         public Plotter(int size, string text, Quad[] normData)
@@ -24,10 +24,10 @@ namespace NmmQuad
             bitmap = new Bitmap(imageSize, imageSize, PixelFormat.Format24bppRgb);
             ClearBackgnd(backgndCol);
             DrawAxes(axisCol);
-            DrawCircles(axisCol);
             ClearCenter(backgndCol);
             PlotDeviation(normData, devDotCol);
             PlotLissajous(normData, dataDotCol);
+            DrawCircles(circleCol);
             DrawText(text, textCol);
         }
 

@@ -5,6 +5,14 @@ namespace NmmQuad
 {
     class Options
     {
+        private int _size;
+        [Option('g', "size", Default = 700, HelpText = "Size of plot graphic (in pixels)")]
+        public int BitmapSize
+        {
+            get => _size;
+            set => _size = value < 200 ? 200 : value;
+        }
+
         [Option('s', "scan", Default = 0, HelpText = "Scan index for multi-scan files.")]
         public int ScanIndex { get; set; }
 
@@ -13,9 +21,6 @@ namespace NmmQuad
 
         [Option("back", HelpText = "Use backtrace profile (when present).")]
         public bool UseBack { get; set; }
-
-        [Option('g', "size", Default = 800, HelpText = "Size of plot graphic (in pixels)")]
-        public int BitmapSize { get; set; }
 
         [Value(0, MetaName = "InputPath", Required = true, HelpText = "Input file-name including path")]
         public string InputPath { get; set; }
