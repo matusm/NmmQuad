@@ -210,6 +210,7 @@ namespace NmmQuad
         private static string CsvContents(Quad[] data, DataAnalyst dataAnalyst)
         {
             StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Phase (deg), Radius, Roundness deviation");
             for (int i = 0; i < data.Length; i++)
             {
                 sb.AppendLine($"{data[i].PhiDeg + 180,8:F3}, {data[i].Radius:F3}, {data[i].Radius - dataAnalyst.AverageRadius:F3}");
