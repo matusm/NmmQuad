@@ -55,65 +55,84 @@ namespace NmmQuad
             nmmFileName.SetScanIndex(options.ScanIndex);
             NmmScanData nmmScanData = new NmmScanData(nmmFileName);
 
+            string outPutBaseFilename = GetOutputBaseFilename(nmmFileName.BaseFileName);
+
             Console.WriteLine();
 
             if (XdataPresent(nmmScanData))
             {
-                string interfero = "X";
-                Console.WriteLine($"{interfero}-interferometer quadrature signals present.");
+                string nameLI = "X";
+                Console.WriteLine($"{nameLI}-interferometer quadrature signals present");
                 Quad[] data = GetXdata(nmmScanData);
-                DataAnalyst dataAnalyst = new DataAnalyst(data);
-                Console.WriteLine(dataAnalyst.GetReport());
-                string csvString = CsvContents(data, dataAnalyst);
-                string outPutBaseFilename = GetOutputBaseFilename(nmmFileName.BaseFileName, interfero);
-                string imageFileName = outPutBaseFilename + ".png";
-                string csvFileName = outPutBaseFilename + ".csv";
-                File.WriteAllText(csvFileName, csvString);
-                Console.WriteLine($"Sorted data written in {csvFileName}");
-                Console.WriteLine();
-                Plotter plotter = new Plotter(options.BitmapSize, interfero, dataAnalyst.NormalizedData);
-                plotter.SaveImage(imageFileName);
-                DisplayPlotFile(imageFileName);
+                AnalyzeSavePlot(data, outPutBaseFilename, nameLI, "raw");
+                if (options.PlotCorr)
+                {
+                    // perform Heydemann fit
+                    Heydemann heydemann = new Heydemann(data);
+                    Quad[] heyCorrected = heydemann.CorrectedData;
+                    AnalyzeSavePlot(heyCorrected, outPutBaseFilename, nameLI, "Heydemann");
+                    // perform Matus/Dai fit
+                    MatusDai matusDai = new MatusDai(heyCorrected);
+                    Quad[] matCorrected = matusDai.CorrectedData;
+                    AnalyzeSavePlot(matCorrected, outPutBaseFilename, nameLI, "MatusDai");
+                }
             }
 
             if (YdataPresent(nmmScanData))
             {
-                string interfero = "Y";
-                Console.WriteLine($"{interfero}-interferometer quadrature signals present.");
+                string nameLI = "Y";
+                Console.WriteLine($"{nameLI}-interferometer quadrature signals present");
                 Quad[] data = GetYdata(nmmScanData);
-                DataAnalyst dataAnalyst = new DataAnalyst(data);
-                Console.WriteLine(dataAnalyst.GetReport());
-                string csvString = CsvContents(data, dataAnalyst);
-                string outPutBaseFilename = GetOutputBaseFilename(nmmFileName.BaseFileName, interfero);
-                string imageFileName = outPutBaseFilename + ".png";
-                string csvFileName = outPutBaseFilename + ".csv";
-                File.WriteAllText(csvFileName, csvString);
-                Console.WriteLine($"Sorted data written in {csvFileName}");
-                Console.WriteLine();
-                Plotter plotter = new Plotter(options.BitmapSize, interfero, dataAnalyst.NormalizedData);
-                plotter.SaveImage(imageFileName);
-                DisplayPlotFile(imageFileName);
+                AnalyzeSavePlot(data, outPutBaseFilename, nameLI, "raw");
+                if (options.PlotCorr)
+                {
+                    // perform Heydemann fit
+                    Heydemann heydemann = new Heydemann(data);
+                    Quad[] heyCorrected = heydemann.CorrectedData;
+                    AnalyzeSavePlot(heyCorrected, outPutBaseFilename, nameLI, "Heydemann");
+                    // perform Matus/Dai fit
+                    MatusDai matusDai = new MatusDai(heyCorrected);
+                    Quad[] matCorrected = matusDai.CorrectedData;
+                    AnalyzeSavePlot(matCorrected, outPutBaseFilename, nameLI, "MatusDai");
+                }
             }
 
             if (ZdataPresent(nmmScanData))
             {
-                string interfero = "Z";
-                Console.WriteLine($"{interfero}-interferometer quadrature signals present.");
+                string nameLI = "Z";
+                Console.WriteLine($"{nameLI}-interferometer quadrature signals present");
                 Quad[] data = GetZdata(nmmScanData);
-                DataAnalyst dataAnalyst = new DataAnalyst(data);
-                Console.WriteLine(dataAnalyst.GetReport());
-                string csvString = CsvContents(data, dataAnalyst);
-                string outPutBaseFilename = GetOutputBaseFilename(nmmFileName.BaseFileName, interfero);
-                string imageFileName = outPutBaseFilename + ".png";
-                string csvFileName = outPutBaseFilename + ".csv";
-                File.WriteAllText(csvFileName, csvString);
-                Console.WriteLine($"Sorted data written in {csvFileName}");
-                Console.WriteLine();
-                Plotter plotter = new Plotter(options.BitmapSize, interfero, dataAnalyst.NormalizedData);
-                plotter.SaveImage(imageFileName);
-                DisplayPlotFile(imageFileName);
+                AnalyzeSavePlot(data, outPutBaseFilename, nameLI, "raw");
+                if (options.PlotCorr)
+                {
+                    // perform Heydemann fit
+                    Heydemann heydemann = new Heydemann(data);
+                    Quad[] heyCorrected = heydemann.CorrectedData;
+                    AnalyzeSavePlot(heyCorrected, outPutBaseFilename, nameLI, "Heydemann");
+                    // perform Matus/Dai fit
+                    MatusDai matusDai = new MatusDai(heyCorrected);
+                    Quad[] matCorrected = matusDai.CorrectedData;
+                    AnalyzeSavePlot(matCorrected, outPutBaseFilename, nameLI, "MatusDai");
+                }
             }
 
+        }
+
+        /**********************************************************************/
+
+        private static void AnalyzeSavePlot(Quad[] data, string outBaseFilename, string nameLI, string corrType)
+        {
+            DataAnalyst dataAnalyst = new DataAnalyst(data);
+            Console.WriteLine($"{nameLI}-interferometer, {corrType}");
+            Console.WriteLine(dataAnalyst.GetReport());
+            string plotFileName = $"{outBaseFilename}{nameLI}_{corrType}.png";
+            string csvFileName = $"{outBaseFilename}{nameLI}_{corrType}.csv";
+            string plotTitle = $"{nameLI}\n{corrType}";
+            string csvString = CsvContents(data, dataAnalyst);
+            File.WriteAllText(csvFileName, csvString);
+            Plotter plotter = new Plotter(options.BitmapSize, plotTitle, dataAnalyst.NormalizedData);
+            plotter.SaveImage(plotFileName);
+            DisplayPlotFile(plotFileName);
         }
 
         /**********************************************************************/
@@ -172,7 +191,7 @@ namespace NmmQuad
         
         /**********************************************************************/
 
-        private static string GetOutputBaseFilename(string baseFilename, string interferometer)
+        private static string GetOutputBaseFilename(string baseFilename)
         {
             if (!string.IsNullOrWhiteSpace(options.OutputPath))
                 return options.OutputPath;
@@ -182,7 +201,7 @@ namespace NmmQuad
             if (options.ProfileIndex != 0) s1 = $"_p{options.ProfileIndex}";
             if (options.ScanIndex != 0) s2 = $"_s{options.ScanIndex}";
             if (options.UseBack) s3 = "_b";
-            return $"{baseFilename}{s2}{s1}{s3}_{interferometer}quad";
+            return $"{baseFilename}{s2}{s1}{s3}_quad_";
         }
 
         /**********************************************************************/

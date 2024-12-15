@@ -29,8 +29,8 @@ namespace NmmQuad
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"Average radius:             {AverageRadius,6:F1}");
-            //sb.AppendLine($"Smallest radius:            {MinimumRadius,6:F1}");
-            //sb.AppendLine($"Largest radius:             {MaximumRadius,6:F1}");
+            sb.AppendLine($"Smallest radius:            {MinimumRadius,6:F1}");
+            sb.AppendLine($"Largest radius:             {MaximumRadius,6:F1}");
             sb.AppendLine($"Average radius near axis:   {AxisRadius,6:F1}");
             sb.AppendLine($"Average radius near median: {MedianRadius,6:F1}");
             sb.AppendLine($"Relative squashing:         {RelativeSquashing*100,6:F1} %");
