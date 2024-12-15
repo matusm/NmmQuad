@@ -55,6 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataAnalyst.cs" />
+    <Compile Include="Heydemann.cs" />
+    <Compile Include="MatusDai.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Plotter.cs" />
     <Compile Include="Program.cs" />
