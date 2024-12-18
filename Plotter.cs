@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.Serialization;
 
 namespace NmmQuad
 {
@@ -9,11 +10,11 @@ namespace NmmQuad
     {
         private int imageSize;
         private const int dotSize = 2;
-        private const double over = 1.15; // 15 % larger
-        private const double amplification = 10; // amplify deviation by this amount
+        private const double over = 1.15;           // image is 15 % larger as unit circle
+        private const double amplification = 10;    // zoom-in deviation by this amount
         private static Color backgndCol = Color.LightYellow;
         private static Color dataDotCol = Color.Red;
-        private static Color devDotCol = Color.DarkOrange;
+        private static Color devDotCol = Color.CornflowerBlue; // Color.DarkOrange is also nice
         private static Color circleCol = Color.DarkGray;
         private static Color axisCol = Color.DarkGray;
         private static Color textCol = Color.Black;
@@ -22,6 +23,7 @@ namespace NmmQuad
         {
             imageSize = size;
             bitmap = new Bitmap(imageSize, imageSize, PixelFormat.Format24bppRgb);
+            SetMetadata(text);
             ClearBackgnd(backgndCol);
             DrawAxes(axisCol);
             ClearCenter(backgndCol);
@@ -31,10 +33,17 @@ namespace NmmQuad
             DrawText(text, textCol);
         }
 
-        public void SaveImage(string filename)
+        public void SaveImage(string filename) => bitmap.Save(filename, ImageFormat.Png);
+
+        private void SetMetadata(string text)
         {
-            ImageFormat f = new ImageFormat(Guid.NewGuid());
-            bitmap.Save(filename, f);
+            PngMetadata pm = new PngMetadata(text);
+            PropertyItem propItem;
+            foreach (var md in pm.Metadata)
+            {
+                propItem = CreatePropertyItem(md.Key, md.Value);
+                bitmap.SetPropertyItem(propItem);
+            }
         }
 
         private void DrawText(string text, Color color)
@@ -143,6 +152,19 @@ namespace NmmQuad
         private int Width(double radius)
         {
             return Transform(radius) - Transform(-radius);
+        }
+
+        // Helper method to create a PropertyItem (metadata)
+        // coded by ChatGPT
+        private static PropertyItem CreatePropertyItem(int id, string value)
+        {
+            // Create a PropertyItem instance
+            PropertyItem propItem = (PropertyItem)FormatterServices.GetUninitializedObject(typeof(PropertyItem));
+            propItem.Id = id;
+            propItem.Type = 2; // ASCII
+            propItem.Value = System.Text.Encoding.ASCII.GetBytes(value + '\0'); // Null-terminated
+            propItem.Len = propItem.Value.Length;
+            return propItem;
         }
 
         private readonly Bitmap bitmap;
