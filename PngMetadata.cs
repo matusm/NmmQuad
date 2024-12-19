@@ -50,7 +50,7 @@ namespace NmmQuad
             Assembly assembly = Assembly.GetExecutingAssembly();
             string name = assembly.GetName().Name;
             string version = assembly.GetName().Version.ToString();
-            return $"{name} V {version}";
+            return $"{name} - ver {version}";
         }
 
         private readonly Dictionary<int, string> metadata = new Dictionary<int, string>(); 

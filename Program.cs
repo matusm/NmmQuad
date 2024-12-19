@@ -7,12 +7,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace NmmQuad
 {
     class Program
     {
+
+
+
         private static Options options = new Options(); // this must be set in Run()
 
         public static void Main(string[] args)
@@ -44,6 +48,7 @@ namespace NmmQuad
         {
             options = ops;
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+            Console.WriteLine(GetWelcomeMessage());
 
             NmmFileName nmmFileName = new NmmFileName(options.InputPath);
 
@@ -188,7 +193,7 @@ namespace NmmQuad
             Array.Sort(data);
             return data;
         }
-        
+
         /**********************************************************************/
 
         private static string GetOutputBaseFilename(string baseFilename)
@@ -248,6 +253,15 @@ namespace NmmQuad
             Process process = new Process();
             process.StartInfo = startInfo;
             process.Start();
+        }
+
+        /**********************************************************************/
+
+        private static string GetWelcomeMessage()
+        {
+            string title = Assembly.GetEntryAssembly().GetName().Name;
+            string version = $"{Assembly.GetEntryAssembly().GetName().Version.Major}.{Assembly.GetEntryAssembly().GetName().Version.Minor}";
+            return $"This is {title}, version {version}";
         }
     }
 }
