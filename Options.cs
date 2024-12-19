@@ -22,7 +22,7 @@ namespace NmmQuad
         [Option("back", HelpText = "Use backtrace profile (when present).")]
         public bool UseBack { get; set; }
 
-        [Option("corr", HelpText = "Display raw data and results of correction methods.")]
+        [Option("corr", HelpText = "Plot raw data and results of correction methods.")]
         public bool PlotCorr { get; set; }
 
         [Value(0, MetaName = "InputPath", Required = true, HelpText = "Input file-name including path")]
