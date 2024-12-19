@@ -233,6 +233,7 @@ namespace NmmQuad
 
         private static string CsvContents(Quad[] data, DataAnalyst dataAnalyst)
         {
+            Array.Sort(data);
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"Phase (deg), Radius, Roundness deviation");
             for (int i = 0; i < data.Length; i++)
