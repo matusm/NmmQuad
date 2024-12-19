@@ -13,9 +13,13 @@ NmmQuad inputfile [outputfile] [options]
 
 ## Options:  
 `--scan (-s)` : Scan index for multi-scan files.
-`--profile (-p)` : Extract a single profile. If `--profile=0` extract the whole scan field. 
+
+`--profile (-p)` : Extract a single profile. If `--profile=0` extract the whole scan field.
+ 
 `--back` : Use the backtrace scan data only (when present).
+
 `--corr` : Plot raw data and results of correction methods.
+
 `--size (-g)` : Size of plot graphic (in pixels).
 
 ## Dependencies
