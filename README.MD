@@ -22,9 +22,10 @@ The input files (four or eight) must contain the interferometer signals. This mu
 ### Output
 For each laserinterferometer a csv-file and a png image is produced. They show the raw signals of the interferometer together with the deviation of the LSQ-circle. When the option `--corr` is used, corrected signals are presented also. This includes the Heydemann correction as well as the Matus/Dai correction.
 
-![Lissajous plot of raw interferometer signals](\TestData\results\test01_XYZ_f_quad_Z_raw.png)
-![Lissajous plot of Heydemann corrected interferometer signals](\TestData\results\test01_XYZ_f_quad_Z_Heydemann.png)
-![Lissajous plot of Heydemann and Matus/Dai corrected interferometer signals](\TestData\results\test01_XYZ_f_quad_Z_MatusDai.png)
+![Lissajous plot of raw interferometer signals](\TestData\results\test01_XYZ_f_quad_Z_raw.png)  
+![Lissajous plot of Heydemann corrected interferometer signals](\TestData\results\test01_XYZ_f_quad_Z_Heydemann.png)  
+![Lissajous plot of Heydemann and Matus/Dai corrected interferometer signals](\TestData\results\test01_XYZ_f_quad_Z_MatusDai.png)  
+
 ## Dependencies
 * [Bev.IO.NmmReader](https://github.com/matusm/Bev.IO.NmmReader)  
 * [At.Matus.StatisticPod](https://github.com/matusm/At.Matus.StatisticPod)
