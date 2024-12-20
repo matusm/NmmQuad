@@ -192,8 +192,6 @@ namespace NmmQuad
 
         private static string GetOutputBaseFilename(string baseFilename)
         {
-            if (!string.IsNullOrWhiteSpace(options.OutputPath))
-                return options.OutputPath;
             string s1 = string.Empty;
             string s2 = string.Empty;
             string s3 = "_f";

@@ -8,20 +8,23 @@ The Nanopositioning and Nanomeasuring Machine (NMM) by [SIOS GmbH](https://sios-
 
 ## Command Line Usage:  
 ```
-NmmQuad inputfile [outputfile] [options]
+NmmQuad inputfile [options]
 ```
+The input files (four or eight) must contain the interferometer signals. This must be specified when starting a scan. To do this, the SIOS measurement software must be started in *systemp* mode.
 
 ## Options:  
-`--scan (-s)` : Scan index for multi-scan files.
-
-`--profile (-p)` : Extract a single profile. If `--profile=0` extract the whole scan field.
- 
-`--back` : Use the backtrace scan data only (when present).
-
-`--corr` : Plot raw data and results of correction methods.
-
+`--scan (-s)` : Scan index for multi-scan files.  
+`--profile (-p)` : Extract a single profile. If `--profile=0` extract the whole scan field.  
+`--back` : Use the backtrace scan data only (when present).  
+`--corr` : Plot raw data and results of correction methods.  
 `--size (-g)` : Size of plot graphic (in pixels).
 
+### Output
+For each laserinterferometer a csv-file and a png image is produced. They show the raw signals of the interferometer together with the deviation of the LSQ-circle. When the option `--corr` is used, corrected signals are presented also. This includes the Heydemann correction as well as the Matus/Dai correction.
+
+![Lissajous plot of raw interferometer signals](\TestData\results\test01_XYZ_f_quad_Z_raw.png)
+![Lissajous plot of Heydemann corrected interferometer signals](\TestData\results\test01_XYZ_f_quad_Z_Heydemann.png)
+![Lissajous plot of Heydemann and Matus/Dai corrected interferometer signals](\TestData\results\test01_XYZ_f_quad_Z_MatusDai.png)
 ## Dependencies
 * [Bev.IO.NmmReader](https://github.com/matusm/Bev.IO.NmmReader)  
 * [At.Matus.StatisticPod](https://github.com/matusm/At.Matus.StatisticPod)
