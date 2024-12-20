@@ -15,8 +15,6 @@ namespace NmmQuad
     class Program
     {
 
-
-
         private static Options options = new Options(); // this must be set in Run()
 
         public static void Main(string[] args)
@@ -27,21 +25,6 @@ namespace NmmQuad
             parserResult
                 .WithParsed<Options>(options => Run(options))
                 .WithNotParsed(errs => DisplayHelp(parserResult, errs));
-        }
-
-        private static void DisplayHelp<T>(ParserResult<T> result, IEnumerable<Error> errs)
-        {
-            string appName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-            HelpText helpText = HelpText.AutoBuild(result, h =>
-            {
-                h.AutoVersion = false;
-                h.AdditionalNewLineAfterOption = false;
-                h.AddPreOptionsLine("\nProgram to check the quadrature signals of the laser interferometers of SIOS NMM-1. The signals must be recorded in the respective scan files.");
-                h.AddPreOptionsLine("");
-                h.AddPreOptionsLine($"Usage: {appName} InputPath [OutPath] [options]");
-                return HelpText.DefaultParsingErrorsHandler(result, h);
-            }, e => e);
-            Console.WriteLine(helpText);
         }
 
         private static void Run(Options ops)
@@ -63,6 +46,9 @@ namespace NmmQuad
             string outPutBaseFilename = GetOutputBaseFilename(nmmFileName.BaseFileName);
 
             Console.WriteLine();
+
+            if(!QuadratureSignalsPresent(nmmScanData))
+                Console.WriteLine("No interferometer signals in scan file.");
 
             if (XdataPresent(nmmScanData))
             {
@@ -141,6 +127,14 @@ namespace NmmQuad
         }
 
         /**********************************************************************/
+
+        private static bool QuadratureSignalsPresent(NmmScanData nmmScanData)
+        {
+            if (XdataPresent(nmmScanData)) return true;
+            if (YdataPresent(nmmScanData)) return true;
+            if (ZdataPresent(nmmScanData)) return true;
+            return false;
+        }
 
         private static bool XdataPresent(NmmScanData nmmScanData)
         {
@@ -264,5 +258,23 @@ namespace NmmQuad
             string version = $"{Assembly.GetEntryAssembly().GetName().Version.Major}.{Assembly.GetEntryAssembly().GetName().Version.Minor}";
             return $"This is {title}, version {version}";
         }
+        
+        /**********************************************************************/
+
+        private static void DisplayHelp<T>(ParserResult<T> result, IEnumerable<Error> errs)
+        {
+            string appName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+            HelpText helpText = HelpText.AutoBuild(result, h =>
+            {
+                h.AutoVersion = false;
+                h.AdditionalNewLineAfterOption = false;
+                h.AddPreOptionsLine("\nProgram to check the quadrature signals of the laser interferometers of SIOS NMM-1. The signals must be recorded in the respective scan files.");
+                h.AddPreOptionsLine("");
+                h.AddPreOptionsLine($"Usage: {appName} InputPath [OutPath] [options]");
+                return HelpText.DefaultParsingErrorsHandler(result, h);
+            }, e => e);
+            Console.WriteLine(helpText);
+        }
+
     }
 }
