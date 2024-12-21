@@ -20,11 +20,18 @@ The input files (four or eight) must contain the interferometer signals. This mu
 `--size (-g)` : Size of plot graphic (in pixels).
 
 ### Output
-For each laserinterferometer a csv-file and a png image is produced. They show the raw signals of the interferometer together with the deviation of the LSQ-circle. When the option `--corr` is used, corrected signals are presented also. This includes the Heydemann correction as well as the Matus/Dai correction.
+For each laserinterferometer a csv-file and a png image is produced. They show the raw signals of the interferometer (red) together with the zoomed-in deviation of the LSQ-circle (blue). When the option `--corr` is used, corrected signals are presented also. This includes the Heydemann correction as well as the Matus/Dai correction. The image files are automatically displayed by the default image viewer of the respective OS.
 
 ![Lissajous plot of raw interferometer signals](/TestData/results/test01_XYZ_f_quad_Z_raw.png)  
+Lissajous plot of raw interferometer signals.  
 ![Lissajous plot of Heydemann corrected interferometer signals](/TestData/results/test01_XYZ_f_quad_Z_Heydemann.png)  
+Lissajous plot of interferometer signals corrected according to the Heydemann method.  
 ![Lissajous plot of Heydemann and Matus/Dai corrected interferometer signals](/TestData/results/test01_XYZ_f_quad_Z_MatusDai.png)  
+Lissajous plot of interferometer signals corrected according first to the Heydemann and the Matus/Dai method.  
+
+### Installation
+If you do not want to build the application from the source code you can use the released binaries. Just copy the .exe and the .dll files to a directory of your choice. This direcory should be included in the user's PATH variable.
+
 
 ## Dependencies
 * [Bev.IO.NmmReader](https://github.com/matusm/Bev.IO.NmmReader)  
