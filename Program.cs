@@ -227,10 +227,10 @@ namespace NmmQuad
         {
             Array.Sort(data);
             StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"Phase (deg), Radius, Roundness deviation");
+            sb.AppendLine($"Phase (deg), Radius, Roundness deviation, sin, cos");
             for (int i = 0; i < data.Length; i++)
             {
-                sb.AppendLine($"{data[i].PhiDeg + 180,8:F3}, {data[i].Radius:F3}, {data[i].Radius - dataAnalyst.AverageRadius:F3}");
+                sb.AppendLine($"{data[i].PhiDeg + 180,8:F3}, {data[i].Radius:F3}, {data[i].Radius - dataAnalyst.AverageRadius:F3}, {data[i].Sin}, {data[i].Cos}");
             }
             return sb.ToString();
         }
