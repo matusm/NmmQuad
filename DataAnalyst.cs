@@ -13,7 +13,10 @@ namespace NmmQuad
         public double AxisRadius => axisRadii.AverageValue;
         public double MedianRadius => medianRadii.AverageValue;
         public double RelativeSquashing => (MedianRadius - AxisRadius) / AverageRadius;
-
+        public double MaximumSin => sinStat.MaximumValue;
+        public double MinimumSin => sinStat.MinimumValue;
+        public double MaximumCos => cosStat.MaximumValue;
+        public double MinimumCos => cosStat.MinimumValue;
         public int AllSamples => (int)allRadii.SampleSize;
         public int AxisSamples => (int)axisRadii.SampleSize;
         public int MedianSamples => (int)medianRadii.SampleSize;
@@ -28,6 +31,8 @@ namespace NmmQuad
         public string GetReport()
         {
             StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Range for sin signal:       {MinimumSin} to {MaximumSin}");
+            sb.AppendLine($"Range for cos signal:       {MinimumCos} to {MaximumCos}");
             sb.AppendLine($"Average radius:             {AverageRadius,6:F1}");
             sb.AppendLine($"Smallest radius:            {MinimumRadius,6:F1}");
             sb.AppendLine($"Largest radius:             {MaximumRadius,6:F1}");
@@ -58,6 +63,8 @@ namespace NmmQuad
                 double r = q.Radius;
                 double phi = q.PhiDeg;
                 allRadii.Update(r);
+                sinStat.Update(q.Sin);
+                cosStat.Update(q.Cos);
                 if (IsNearToAxis(phi)) axisRadii.Update(r);
                 if (IsNearToMedian(phi)) medianRadii.Update(r);
             }
@@ -92,5 +99,7 @@ namespace NmmQuad
         private readonly StatisticPod allRadii = new StatisticPod();
         private readonly StatisticPod axisRadii = new StatisticPod();
         private readonly StatisticPod medianRadii = new StatisticPod();
+        private readonly StatisticPod sinStat = new StatisticPod();
+        private readonly StatisticPod cosStat = new StatisticPod();
     }
 }
