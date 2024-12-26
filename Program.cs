@@ -118,8 +118,10 @@ namespace NmmQuad
             Console.WriteLine(dataAnalyst.GetReport());
             string plotFileName = $"{outBaseFilename}{nameLI}_{corrType}.png";
             string csvFileName = $"{outBaseFilename}{nameLI}_{corrType}.csv";
+            string txtFileName = $"{outBaseFilename}{nameLI}_{corrType}.txt";
             string plotTitle = $"{nameLI}\n{corrType}";
             string csvString = CsvContents(data, dataAnalyst);
+            File.WriteAllText(txtFileName, $"{GetWelcomeMessage()}\n\n{dataAnalyst.GetReport()}");
             File.WriteAllText(csvFileName, csvString);
             Plotter plotter = new Plotter(options.BitmapSize, plotTitle, dataAnalyst.NormalizedData);
             plotter.SaveImage(plotFileName);
@@ -253,8 +255,8 @@ namespace NmmQuad
         private static string GetWelcomeMessage()
         {
             string title = Assembly.GetEntryAssembly().GetName().Name;
-            string version = $"{Assembly.GetEntryAssembly().GetName().Version.Major}.{Assembly.GetEntryAssembly().GetName().Version.Minor}";
-            return $"This is {title}, version {version}";
+            string version = $"{Assembly.GetEntryAssembly().GetName().Version}";
+            return $"{title}, version {version}";
         }
         
         /**********************************************************************/
