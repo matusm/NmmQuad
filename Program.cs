@@ -39,7 +39,10 @@ namespace NmmQuad
             if (nmmDsc.Procedure == MeasurementProcedure.NoFile)
                 ErrorExit("!file not found(?)", 1);
             if (nmmDsc.NumberOfScans < options.ScanIndex)
-                ErrorExit("!scan number not present in files", 1);
+                ErrorExit("!scan number not present in files", 2);
+            if (!QuadratureSignalsPresent(nmmDsc))
+                ErrorExit("No interferometer signals in scan file.", 3);
+
             nmmFileName.SetScanIndex(options.ScanIndex);
             NmmScanData nmmScanData = new NmmScanData(nmmFileName);
 
@@ -47,10 +50,7 @@ namespace NmmQuad
 
             Console.WriteLine();
 
-            if(!QuadratureSignalsPresent(nmmScanData))
-                Console.WriteLine("No interferometer signals in scan file.");
-
-            if (XdataPresent(nmmScanData))
+            if (XdataPresent(nmmDsc))
             {
                 string nameLI = "X";
                 Console.WriteLine($"{nameLI}-interferometer quadrature signals present");
@@ -69,7 +69,7 @@ namespace NmmQuad
                 }
             }
 
-            if (YdataPresent(nmmScanData))
+            if (YdataPresent(nmmDsc))
             {
                 string nameLI = "Y";
                 Console.WriteLine($"{nameLI}-interferometer quadrature signals present");
@@ -88,7 +88,7 @@ namespace NmmQuad
                 }
             }
 
-            if (ZdataPresent(nmmScanData))
+            if (ZdataPresent(nmmDsc))
             {
                 string nameLI = "Z";
                 Console.WriteLine($"{nameLI}-interferometer quadrature signals present");
@@ -130,35 +130,35 @@ namespace NmmQuad
 
         /**********************************************************************/
 
-        private static bool QuadratureSignalsPresent(NmmScanData nmmScanData)
+        private static bool QuadratureSignalsPresent(NmmDescriptionFileParser nmmDsc)
         {
-            if (XdataPresent(nmmScanData)) return true;
-            if (YdataPresent(nmmScanData)) return true;
-            if (ZdataPresent(nmmScanData)) return true;
+            if (XdataPresent(nmmDsc)) return true;
+            if (YdataPresent(nmmDsc)) return true;
+            if (ZdataPresent(nmmDsc)) return true;
             return false;
         }
 
-        private static bool XdataPresent(NmmScanData nmmScanData)
+        private static bool XdataPresent(NmmDescriptionFileParser nmmDsc)
         {
-            if (!nmmScanData.ColumnPresent("F0"))
+            if (!nmmDsc.ColumnPresent("F0"))
                 return false;
-            if (!nmmScanData.ColumnPresent("F1"))
+            if (!nmmDsc.ColumnPresent("F1"))
                 return false;
             return true;
         }
-        private static bool YdataPresent(NmmScanData nmmScanData)
+        private static bool YdataPresent(NmmDescriptionFileParser nmmDsc)
         {
-            if (!nmmScanData.ColumnPresent("F2"))
+            if (!nmmDsc.ColumnPresent("F2"))
                 return false;
-            if (!nmmScanData.ColumnPresent("F3"))
+            if (!nmmDsc.ColumnPresent("F3"))
                 return false;
             return true;
         }
-        private static bool ZdataPresent(NmmScanData nmmScanData)
+        private static bool ZdataPresent(NmmDescriptionFileParser nmmDsc)
         {
-            if (!nmmScanData.ColumnPresent("F4"))
+            if (!nmmDsc.ColumnPresent("F4"))
                 return false;
-            if (!nmmScanData.ColumnPresent("F5"))
+            if (!nmmDsc.ColumnPresent("F5"))
                 return false;
             return true;
         }
