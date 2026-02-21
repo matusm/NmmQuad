@@ -1,4 +1,4 @@
-﻿using Bev.IO.NmmReader.scan_mode;
+﻿using At.Matus.IO.NmmReader.Interferometry;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;

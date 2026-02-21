@@ -1,5 +1,5 @@
-﻿using At.Matus.StatisticPod;
-using Bev.IO.NmmReader.scan_mode;
+﻿using At.Matus.IO.NmmReader.Interferometry;
+using At.Matus.StatisticPod;
 using System;
 using System.Text;
 

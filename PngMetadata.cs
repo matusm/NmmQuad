@@ -11,7 +11,7 @@ namespace NmmQuad
         {
             metadata.Add(0x0320, "SIOS-NMM quadrature signal."); // ImageTitle (short)
             metadata.Add(0x010E, FormatText(text)); // ImageDescription (long)
-            metadata.Add(0x013B, "Michael Matus (BEV)"); // Artist
+            metadata.Add(0x013B, "Michael Matus"); // Artist
             metadata.Add(0x8298, GetCopyright()); // Copyright
             metadata.Add(0x0131, GetSoftwareUsed()); // SoftwareUsed
             metadata.Add(0x9286, "red: Lissajous trajectory; blue: zoomed in deviation from LSQ circle."); // Comment
